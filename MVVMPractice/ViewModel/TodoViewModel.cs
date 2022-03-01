@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using MVVMPractice.Commands;
 using MVVMPractice.Model;
+using Newtonsoft.Json;
 namespace MVVMPractice.ViewModel
 {
     public class TodoViewModel : BaseViewModel
@@ -15,14 +19,17 @@ namespace MVVMPractice.ViewModel
         private string _description;
         private ObservableCollection<Todo> _todos;
         private ICommand _SubmitCommand;
+        private ICommand _SaveCommand;
       
         public TodoViewModel()
         {
-            _todos = new ObservableCollection<Todo>()
+            string text = System.IO.File.ReadAllText($"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}/file_json.json");
+            var list = JsonConvert.DeserializeObject<IList<Todo>>(text);
+            _todos = new ObservableCollection<Todo>();
+            foreach(var item in list)
             {
-                new Todo() { Title = "Salam",Description="Get Milk",Created=DateTime.Now.ToString("d"),isActive=true},
-                new Todo() { Title ="Aleykum",Description="Get Milch",Created=DateTime.Now.ToString("d")}
-            };
+                _todos.Add(item);
+            }
         }
        
         public bool IsCompleted { get { return _isCompleted; } set { _isCompleted = value; OnPropertyChanged(); } }
@@ -41,6 +48,18 @@ namespace MVVMPractice.ViewModel
             };
 
         }*/
+       public ICommand SaveCommand
+        {
+            get
+            {
+                if (_SaveCommand == null)
+                {
+                    _SaveCommand = new RelayCommand(param => this.WriteToJSON(todos),
+                        null);
+                }
+                return _SaveCommand;
+            }
+        }
         public ICommand SubmitCommand
         {
             get
@@ -56,6 +75,12 @@ namespace MVVMPractice.ViewModel
         public ObservableCollection<Todo> todos { get { return _todos; } set {
                 this._todos=value;
                 base.OnPropertyChanged(); } }
+
+        private async Task WriteToJSON(IList<Todo> todos)
+        {
+           var json_File = JsonConvert.SerializeObject(todos, Formatting.Indented);
+           await File.WriteAllTextAsync($"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}/file_json.json", json_File);
+        }
         private void Submit()
         { var newTodo = new Todo
         {
@@ -66,6 +91,7 @@ namespace MVVMPractice.ViewModel
         };
             todos.Add(newTodo);
             Trace.WriteLine(newTodo.ToString());
+            
         }
     }
 }

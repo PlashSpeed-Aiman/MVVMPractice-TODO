@@ -10,11 +10,7 @@
     <Window.DataContext>
         <vm:TodoViewModel/>
     </Window.DataContext>
-    <Window.Resources>
-        <Style TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="124*"/>
@@ -24,7 +20,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
             <RowDefinition Height="2*" />
-            <RowDefinition Height="*"/>
+
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Margin="10,18,124,0" Height="16" Width="auto" VerticalAlignment="Top" Grid.Column="1">Title</TextBlock>
         <TextBlock Grid.Row="0" Margin="10,64,67,0" Height="16" VerticalAlignment="Top" Grid.Column="1">Description</TextBlock>
@@ -35,7 +31,7 @@
             <TextBlock  TextWrapping="Wrap"    Padding="5" Text="{Binding ElementName=DescriptionTextBox, Path=Text}" Height="auto" Foreground="#FF2B2B2B" Background="#FFE4E4E4"/>
         </ScrollViewer>
 
-        <ListView ItemsSource="{Binding todos}" Grid.ColumnSpan="4" Margin="10,217,10,6" Grid.RowSpan="2" HorizontalContentAlignment="Left">
+        <ListView ItemsSource="{Binding todos}" Grid.ColumnSpan="4" Margin="10,225,10,6" Grid.RowSpan="2" >
             <ListView.View >
                 <GridView>
                     <GridViewColumn  Header="Title" Width="Auto " DisplayMemberBinding="{Binding Title}" />
@@ -51,7 +47,11 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Grid.Column="1" Content="Add" Command="{Binding SubmitCommand}" HorizontalAlignment="Left" Margin="10,187,0,0" VerticalAlignment="Top" Width="68" Height="32"/>
+        <StackPanel Width="auto" Height="auto" VerticalAlignment="Top" Margin="10,179,142,0" Grid.Column="1" Grid.Row="0">
+            <Button Grid.Column="1" Content="Add" Command="{Binding SubmitCommand}" Margin="0" VerticalAlignment="Top" Width="70" Height="32"/>
+            <Button Content="Save Todo" Command="{Binding SaveCommand}" Width="160" Height="32"/>
+        </StackPanel>
+
 
 
 
