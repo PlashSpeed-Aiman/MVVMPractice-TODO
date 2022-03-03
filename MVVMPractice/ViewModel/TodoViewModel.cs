@@ -20,35 +20,46 @@ namespace MVVMPractice.ViewModel
         private ObservableCollection<Todo> _todos;
         private ICommand _SubmitCommand;
         private ICommand _SaveCommand;
-      
+        private ICommand _DeleteCommand;
         public TodoViewModel()
         {
             string text = System.IO.File.ReadAllText($"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}/file_json.json");
             var list = JsonConvert.DeserializeObject<IList<Todo>>(text);
             _todos = new ObservableCollection<Todo>();
-            foreach(var item in list)
+            foreach (var item in list)
             {
                 _todos.Add(item);
             }
         }
-       
+
         public bool IsCompleted { get { return _isCompleted; } set { _isCompleted = value; OnPropertyChanged(); } }
         public string Title { get { return _title; } set { _title = value; OnPropertyChanged(); } }
 
-        public string DescriptionT { get { return _description; } set { _description = value;OnPropertyChanged(); } }
+        public string DescriptionT { get { return _description; } set { _description = value; OnPropertyChanged(); } }
 
-       /* public Todo todo()
+        /* public Todo todo()
+         {
+             return new Todo
+             {
+                 Title = Title,
+                 Description = DescriptionT,
+                 Created = DateTime.Now,
+                 isActive = IsCompleted
+             };
+
+         }*/
+        public ICommand DeleteCommand
         {
-            return new Todo
+            get
             {
-                Title = Title,
-                Description = DescriptionT,
-                Created = DateTime.Now,
-                isActive = IsCompleted
-            };
-
-        }*/
-       public ICommand SaveCommand
+                if (_DeleteCommand == null)
+                {
+                    _DeleteCommand = new RelayCommand(param => this.Delete(param), null);
+                }
+                return _DeleteCommand;
+            }
+        }
+        public ICommand SaveCommand
         {
             get
             {
@@ -72,26 +83,39 @@ namespace MVVMPractice.ViewModel
                 return _SubmitCommand;
             }
         }
-        public ObservableCollection<Todo> todos { get { return _todos; } set {
-                this._todos=value;
-                base.OnPropertyChanged(); } }
+        public ObservableCollection<Todo> todos
+        {
+            get { return _todos; }
+            set
+            {
+                this._todos = value;
+                base.OnPropertyChanged();
+            }
+        }
 
         private async Task WriteToJSON(IList<Todo> todos)
         {
-           var json_File = JsonConvert.SerializeObject(todos, Formatting.Indented);
-           await File.WriteAllTextAsync($"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}/file_json.json", json_File);
+            var json_File = JsonConvert.SerializeObject(todos, Formatting.Indented);
+            await File.WriteAllTextAsync($"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}/file_json.json", json_File);
         }
         private void Submit()
-        { var newTodo = new Todo
         {
-            Title = Title,
-            Description = DescriptionT,
-            Created = DateTime.Now.ToString("d"),
-            isActive = IsCompleted
-        };
+            var newTodo = new Todo
+            {
+                Title = Title,
+                Description = DescriptionT,
+                Created = DateTime.Now.ToString("d"),
+                isActive = IsCompleted
+            };
             todos.Add(newTodo);
             Trace.WriteLine(newTodo.ToString());
-            
+
+        }
+        private void Delete(object sum)
+        {
+            var stuff = sum as Todo;
+            if (stuff != null) todos.Remove(stuff);
+            Trace.WriteLine("Removed!");
         }
     }
 }

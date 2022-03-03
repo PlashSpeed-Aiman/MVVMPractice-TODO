@@ -5,52 +5,88 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MVVMPractice"
         xmlns:vm ="clr-namespace:MVVMPractice.ViewModel"
+         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MVVM Todo List" Height="Auto" Width="Auto">
+        Title="MVVM Todo List" Height="auto" MinWidth="550" Width="550"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}" d:DesignWidth="1237.598" d:DesignHeight="597.867"
+        >
     <Window.DataContext>
         <vm:TodoViewModel/>
     </Window.DataContext>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="124*"/>
-            <ColumnDefinition Width="281*"/>
-            <ColumnDefinition Width="124*"/>
+            
+            <ColumnDefinition Width="*"/>
+          
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
             <RowDefinition Height="2*" />
 
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Margin="10,18,124,0" Height="16" Width="auto" VerticalAlignment="Top" Grid.Column="1">Title</TextBlock>
-        <TextBlock Grid.Row="0" Margin="10,64,67,0" Height="16" VerticalAlignment="Top" Grid.Column="1">Description</TextBlock>
-        <TextBox Margin="10,34,30,0" Height="25" VerticalAlignment="Top" Grid.Column="1" Text="{Binding Title,Mode=TwoWay}"/>
-        <TextBox TextWrapping="Wrap"  x:Name="DescriptionTextBox" Margin="10,85,30,0" Text ="{Binding DescriptionT ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="31" VerticalAlignment="Top" Grid.Column="1" />
-        <TextBlock x:Name="Describer"  Grid.Column="1" Margin="61,109,56,37"  />
-        <ScrollViewer  Margin="10,124,30,0" Grid.Row="0" Grid.Column="1" Height="50" VerticalAlignment="Top" >
+        <TextBlock Grid.Row="0" Margin="20,15,10,0" Height="Auto" Width="auto" VerticalAlignment="Top" Grid.Column="1" FontSize="20">Title</TextBlock>
+        <TextBlock Grid.Row="0" Margin="20,70,10,0" Height="Auto" VerticalAlignment="Top" Grid.Column="1" FontSize="20">Description</TextBlock>
+        <TextBox 
+            Margin="20,42,30,0" 
+            Height="25" 
+            VerticalAlignment="Top" 
+            Grid.Column="1" 
+            Text="{Binding Title,Mode=TwoWay}"/>
+        
+        <TextBox 
+            MaxHeight="31"
+            TextWrapping="Wrap"  
+            x:Name="DescriptionTextBox" 
+            Margin="20,95,30,0" 
+            Text ="{Binding DescriptionT ,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+            Height="auto" 
+            VerticalAlignment="Top" 
+            Grid.Column="1" 
+            xml:space="preserve"
+  AcceptsReturn="True"
+            />
+        <ScrollViewer  Margin="20,130,20,0" Grid.Row="0" Grid.Column="1" Height="50" VerticalAlignment="Top" >
             <TextBlock  TextWrapping="Wrap"    Padding="5" Text="{Binding ElementName=DescriptionTextBox, Path=Text}" Height="auto" Foreground="#FF2B2B2B" Background="#FFE4E4E4"/>
         </ScrollViewer>
 
-        <ListView ItemsSource="{Binding todos}" Grid.ColumnSpan="4" Margin="10,225,10,6" Grid.RowSpan="2" >
-            <ListView.View >
-                <GridView>
-                    <GridViewColumn  Header="Title" Width="Auto " DisplayMemberBinding="{Binding Title}" />
-                    <GridViewColumn  Header="Description" Width="Auto " DisplayMemberBinding="{Binding Description}" />
-                    <GridViewColumn  Header="Created" Width="Auto " DisplayMemberBinding="{Binding Created}" />
-                    <GridViewColumn Header="Done" Width="Auto" >
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding isActive}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
+        <ListView ScrollViewer.HorizontalScrollBarVisibility="Hidden" x:Name="ListView1" ItemsSource="{Binding todos}" Grid.Column="1"  Margin="10,240,10,6" Grid.RowSpan="2" HorizontalAlignment="Center" >
+            <ListView.ItemTemplate >
+                <DataTemplate>
+                    <materialDesign:Card Padding="20" Width="300">
+                       
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Created}" Grid.Row="0" />
+                            <TextBlock Text="{Binding Title}" Grid.Row="1" FontSize="20" FontFamily="Roboto" Margin="0,0,0,10"/>
+                            <TextBlock Text="{Binding Description}" Grid.Row="2" Grid.ColumnSpan="4" TextWrapping="Wrap"/>
+                            <Separator Grid.ColumnSpan="3" Grid.Row="3" Style="{StaticResource MaterialDesignDarkSeparator}" />
+                            <CheckBox Grid.Row="4" IsChecked="{Binding isActive}" />
+                            <Button Grid.Row="4" Grid.Column="1" Content="REMOVE" Style="{DynamicResource MaterialDesignFlatButton}" Command="{Binding ElementName=ListView1,Path=DataContext.DeleteCommand}" CommandParameter="{Binding .}"/>
+                        </Grid>
+                    </materialDesign:Card>
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
-        <StackPanel Width="auto" Height="auto" VerticalAlignment="Top" Margin="10,179,142,0" Grid.Column="1" Grid.Row="0">
-            <Button Grid.Column="1" Content="Add" Command="{Binding SubmitCommand}" Margin="0" VerticalAlignment="Top" Width="70" Height="32"/>
-            <Button Content="Save Todo" Command="{Binding SaveCommand}" Width="160" Height="32"/>
-        </StackPanel>
+        <Grid Width="auto" Height="auto" VerticalAlignment="Top" Margin="6,195,0,0" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.50*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Add" Command="{Binding SubmitCommand}" Margin="0,0,10,0" Width="100" VerticalAlignment="Center" Height="32"/>
+            <Button Grid.Column="1"  Content="Save Todo" Command="{Binding SaveCommand}" Width="100" Height="32" />
+        </Grid>
 
 
 

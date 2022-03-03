@@ -25,5 +25,10 @@ namespace MVVMPractice
             
             InitializeComponent();
         }
+
+        private void Button_ColorChanged(object sender, RoutedPropertyChangedEventArgs<Color> e)
+        {
+
+        }
     }
 }
