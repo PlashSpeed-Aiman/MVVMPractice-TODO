@@ -5,6 +5,7 @@ using System.Text;
 
 namespace MVVMPractice.Model
 {
+//I think it's unnecessary to put private fields, use only public props for Model!
     public class Todo
     {
         private string _id;
