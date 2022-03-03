@@ -22,9 +22,18 @@ namespace MVVMPractice.ViewModel
         private ICommand _SubmitCommand;
         private ICommand _SaveCommand;
         private ICommand _DeleteCommand;
+        private string path = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/file_json.json";
         public TodoViewModel()
         {
-            string text = System.IO.File.ReadAllText($"{System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)}/file_json.json");
+            var text = String.Empty;
+            try {  text = System.IO.File.ReadAllText(path); }
+
+            catch(System.IO.FileNotFoundException) {
+                text = "[]";
+                System.IO.File.WriteAllText(path, text);
+
+            }
+           
             var list = JsonConvert.DeserializeObject<IList<Todo>>(text);
             _todos = new ObservableCollection<Todo>();
             foreach (var item in list)
