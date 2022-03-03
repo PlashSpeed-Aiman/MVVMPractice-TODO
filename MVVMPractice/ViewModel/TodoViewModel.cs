@@ -12,6 +12,7 @@ using MVVMPractice.Model;
 using Newtonsoft.Json;
 namespace MVVMPractice.ViewModel
 {
+    
     public class TodoViewModel : BaseViewModel
     {
         private string _title;
